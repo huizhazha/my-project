@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+ 
+    <global-method-security pre-post-annotations="enabled" />
+<!--    <http pattern="/*" security="none"/>  暂不使用security -->
+    <http pattern="/js/**" security="none"/>
+    <http pattern="/javax.faces.resource/**" security="none"/>
+	
+    <http auto-config="false" disable-url-rewriting="true" use-expressions="true" entry-point-ref="authenticationEntryPoint" authentication-manager-ref="authenticationManager">
+    	<intercept-url pattern="/user/*" access="hasRole('user')"/>
+    	<intercept-url pattern="/admin/**" access="hasRole('admin')"/>
+    	
+    	<intercept-url pattern="/**" access="isAuthenticated()" />
+<!--		<custom-filter ref="exceptionTranslationFilter" before="EXCEPTION_TRANSLATION_FILTER" />-->
+		<custom-filter ref="customAuthenticationFilter" position="FORM_LOGIN_FILTER" />
+		<custom-filter ref="concurrentSessionFilter" position="CONCURRENT_SESSION_FILTER" />
+        <logout logout-success-url="/login.xhtml" logout-url="/logout" delete-cookies="JSESSIONID"/>
+        <session-management session-fixation-protection="none"/>
+        <custom-filter ref="sessionManagementFilter" position="SESSION_MANAGEMENT_FILTER"/>
+        <access-denied-handler ref="accessDeniedHandler"/>
+    </http>
+    
+    <beans:bean id="encoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder"/>
+
+	<beans:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+		<beans:property name="providers">
+			<beans:list>
+				<beans:ref local="daoAuthenticationProvider"/>
+				<beans:ref local="adminDaoAuthenticationProvider"/>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	<!-- 数据库认证 -->
+	<beans:bean id="passwordEncoder" class="org.springframework.spring.security.custom.CustomPasswordEncoder"></beans:bean>
+	<beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<beans:property name="hideUserNotFoundExceptions" value="false" />
+		<beans:property name="passwordEncoder" ref="passwordEncoder"></beans:property>
+		<beans:property name="userDetailsService" ref="userService" />
+	</beans:bean>
+	
+	<beans:bean id="adminDaoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<beans:property name="hideUserNotFoundExceptions" value="false" />
+		<beans:property name="passwordEncoder" ref="passwordEncoder"></beans:property>
+		<beans:property name="userDetailsService" ref="adminUserService" />
+	</beans:bean>
+	
+<!-- 	<beans:bean id="userDetailsService" class="org.springframework.spring.security.custom.UserDetailService"></beans:bean> -->
+<!-- 	<beans:bean id="adminUserDetailsService" class="org.springframework.spring.security.custom.AdminUserDetailService"></beans:bean> -->
+	
+	<!-- 同步会话 -->
+	<beans:bean id="concurrentSessionFilter" class="org.springframework.spring.security.custom.CustomConcurrentSessionFilter">
+		<beans:property name="sessionRegistry" ref="sessionRegistry" />
+		<beans:property name="expiredUrl" value="/loginInvalid.xhtml" />
+	</beans:bean>
+	<beans:bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
+		<beans:constructor-arg name="sessionRegistry" ref="sessionRegistry"/> 
+<!--		<beans:property name="exceptionIfMaximumExceeded" value="true"/> -->
+		<beans:property name="maximumSessions" value="2" />
+	</beans:bean>
+	<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+    
+    <!-- 自定义登录过滤器 -->
+    <beans:bean id="customAuthenticationFilter" class="org.springframework.spring.security.custom.CustomAuthenticationFilter">
+    	<beans:property name="filterProcessesUrl" value="/doLogin"></beans:property>
+    	<beans:property name="usernameParameter" value="username"></beans:property>
+    	<beans:property name="passwordParameter" value="password"></beans:property>
+    	<beans:property name="authenticationSuccessHandler" ref="loginAuthenticationSuccessHandler"></beans:property>
+		<beans:property name="authenticationFailureHandler" ref="loginAuthenticationFailureHandler"></beans:property>
+    	<beans:property name="authenticationManager" ref="authenticationManager" />
+    	<beans:property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy"/> 
+    </beans:bean>
+    
+    <!-- 表单登陆 入口点 -->
+	<beans:bean id="authenticationEntryPoint" class="org.springframework.spring.security.custom.CustomLoginUrlAuthenticationEntryPoint">
+		<beans:property name="loginFormUrl" value="/login.xhtml"></beans:property>
+	</beans:bean>
+	
+	<!-- 登录成功处理 -->
+	<beans:bean id="loginAuthenticationSuccessHandler" class="org.springframework.spring.security.custom.LoginAuthenticationSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/user/order.xhtml"></beans:property>
+		<beans:property name="defaultAdminTargetUrl" value="/admin/order.xhtml"></beans:property>
+		<beans:property name="alwaysUseDefaultTargetUrl" value="true"></beans:property>
+	</beans:bean>
+	
+	<!-- 登录失败处理 -->
+	<beans:bean id="loginAuthenticationFailureHandler" class="org.springframework.spring.security.custom.LoginAuthenticationFailureHandler">
+		<beans:property name="defaultFailureUrl" value="/login.xhtml"></beans:property>
+	</beans:bean>
+	
+	<!-- 拒接访问过滤器 -->
+<!-- 	<beans:bean id="exceptionTranslationFilter" -->
+<!-- 		class="org.springframework.security.web.access.ExceptionTranslationFilter"> -->
+<!-- 		<beans:property name="authenticationEntryPoint" ref="authenticationEntryPoint" /> -->
+<!-- 		<beans:property name="accessDeniedHandler" ref="accessDeniedHandler" /> -->
+<!-- 	</beans:bean> -->
+	
+	<!-- 配置拒绝页面 -->
+	<beans:bean id="accessDeniedHandler" class="org.springframework.spring.security.custom.CustomAccessDeniedHandler">
+		<beans:property name="errorPage" value="/accessDenied.xhtml" />
+	</beans:bean>
+
+<!--session管理 主要是注入CustomInvalidSessionStrategy根据uri做ajax请求的处理-->
+	<beans:bean id="sessionManagementFilter" class="org.springframework.security.web.session.SessionManagementFilter">
+		<beans:constructor-arg name="securityContextRepository" ref="httpSessionSecurityContextRepository" />
+		<beans:property name="invalidSessionStrategy">
+			<beans:bean class="org.springframework.spring.security.custom.CustomInvalidSessionStrategy">
+<!--				<beans:property name="invalidSessionUrl" value="/loginInvalid"/>-->
+				<beans:property name="invalidSessionUrl" value="/login.xhtml"/>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+	
+	<beans:bean id="httpSessionSecurityContextRepository" class="org.springframework.security.web.context.HttpSessionSecurityContextRepository" />
+</beans:beans>
+
+

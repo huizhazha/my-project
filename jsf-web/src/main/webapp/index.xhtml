@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html">
+
+	<h:head>
+		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+			<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+			<title>PrimeFaces - ShowCase</title>
+			<link rel="shortcut icon" type="image/png"
+				href="#{request.contextPath}/images/favicon.png" />
+		</f:facet>
+	</h:head>
+
+	<h:body>
+<!-- 		<h:form> -->
+<!-- 			<h:panelGrid columns="4" cellpadding="5"> -->
+<!-- 				<h:outputLabel for="name" value="Name:" style="font-weight:bold" /> -->
+<!-- 				<p:inputText id="name" value="#{basicBean.text}" /> -->
+<!-- 				<p:commandButton value="Submit" update="display" -->
+<!-- 					icon="ui-icon-check" /> -->
+<!-- 				<h:outputText id="display" value="#{basicBean.text}" /> -->
+<!-- 			</h:panelGrid> -->
+<!-- 		</h:form> -->
+		<h:form>
+			<h:panelGrid columns="1">
+				<p:inputText value="#{userBean.user.username}"/>
+				<p:inputText value="#{userBean.user.password}"/>
+				<p:commandButton actionListener="#{userBean.queryUser}" update="@all" value="查询"/>
+				<p:commandButton actionListener="#{userBean.updateUser}" update="@all" value="更新"/>
+				<p:commandButton actionListener="#{userBean.delUser}" update="@all" value="删除"/>
+				<p:commandButton actionListener="#{userBean.addUser}" update="@all" value="保存"/>
+			</h:panelGrid>
+		</h:form>
+	</h:body>
+</f:view>
+</html>
