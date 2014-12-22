@@ -80,12 +80,12 @@
 			<version>1.9</version>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>central</id>
-			<url>http://repo.maven.org/maven2/</url>
-			<name>central</name>
-		</repository>
-	</repositories>
+<!-- 	<repositories> -->
+<!-- 		<repository> -->
+<!-- 			<id>central</id> -->
+<!-- 			<url>http://repo.maven.org/maven2/</url> -->
+<!-- 			<name>central</name> -->
+<!-- 		</repository> -->
+<!-- 	</repositories> -->
 </project>
 
