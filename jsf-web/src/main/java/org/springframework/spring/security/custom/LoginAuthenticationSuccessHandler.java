@@ -7,13 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jsf.core.domain.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.util.StringUtils;
-
-import com.rippletech.payment.domain.AdminUser;
 
 public class LoginAuthenticationSuccessHandler extends
 		AbstractAuthenticationTargetUrlRequestHandler implements
@@ -69,7 +68,7 @@ public class LoginAuthenticationSuccessHandler extends
 	protected String determineTargetUrl(HttpServletRequest request,
 			HttpServletResponse response, Authentication authentication) {
 		if (isAlwaysUseDefaultTargetUrl()) {
-			if(authentication.getPrincipal() instanceof AdminUser){
+			if(authentication.getPrincipal() instanceof User){
 				return defaultAdminTargetUrl;
 			}else{
 				return getDefaultTargetUrl();

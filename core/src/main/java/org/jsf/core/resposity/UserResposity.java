@@ -1,8 +1,8 @@
-package org.jsf.web.resposity;
+package org.jsf.core.resposity;
 
 import java.io.Serializable;
 
-import org.jsf.web.domain.User;
+import org.jsf.core.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

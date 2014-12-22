@@ -1,8 +1,8 @@
-package org.jsf.web.service.impl;
+package org.jsf.core.service.impl;
 
-import org.jsf.web.domain.User;
-import org.jsf.web.resposity.UserResposity;
-import org.jsf.web.service.UserService;
+import org.jsf.core.domain.User;
+import org.jsf.core.resposity.UserResposity;
+import org.jsf.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
