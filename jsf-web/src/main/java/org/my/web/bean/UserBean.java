@@ -1,9 +1,9 @@
-package org.jsf.web.bean;
+package org.my.web.bean;
 
 import javax.annotation.PostConstruct;
 
-import org.jsf.core.domain.User;
-import org.jsf.core.service.UserService;
+import org.my.core.domain.User;
+import org.my.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

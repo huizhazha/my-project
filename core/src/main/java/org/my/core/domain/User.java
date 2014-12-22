@@ -1,4 +1,4 @@
-package org.jsf.core.domain;
+package org.my.core.domain;
 
 import java.io.Serializable;
 

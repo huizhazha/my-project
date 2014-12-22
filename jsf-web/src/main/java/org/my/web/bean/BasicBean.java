@@ -1,4 +1,4 @@
-package org.jsf.web.bean;
+package org.my.web.bean;
  
 import java.io.Serializable;
 

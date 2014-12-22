@@ -1,4 +1,4 @@
-package org.jsf.core.service;
+package org.my.core.service;
 
 public interface MulitInstanceService {
     void test();

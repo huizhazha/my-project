@@ -1,6 +1,6 @@
-package org.jsf.core.service;
+package org.my.core.service;
 
-import org.jsf.core.domain.User;
+import org.my.core.domain.User;
 
 public interface UserService {
 	User getUser(String username);

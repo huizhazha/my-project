@@ -1,6 +1,6 @@
-package org.jsf.core.service.impl;
+package org.my.core.service.impl;
 
-import org.jsf.core.service.MulitInstanceService;
+import org.my.core.service.MulitInstanceService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
